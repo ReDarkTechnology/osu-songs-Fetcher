@@ -42,9 +42,11 @@ namespace osu_Songs_Fetcher
 			fetchedSongsFolder = textBox2.Text;
 			if(!string.IsNullOrEmpty(osuSongsFolder) && !string.IsNullOrEmpty(fetchedSongsFolder)){
 				process = true;
-				listView1.Items.Clear();
-				if(!Directory.Exists(fetchedSongsFolder)) Directory.CreateDirectory(fetchedSongsFolder);
-				foundFolders = Directory.GetDirectories(osuSongsFolder);
+				if(!prelisted){
+					listView1.Items.Clear();
+					if(!Directory.Exists(fetchedSongsFolder)) Directory.CreateDirectory(fetchedSongsFolder);
+					foundFolders = Directory.GetDirectories(osuSongsFolder);
+				}
 				currentFolder = 0;
 			}
 		}
@@ -53,24 +55,71 @@ namespace osu_Songs_Fetcher
 		}
 		//Async
 		public bool process;
+		public bool prelisted;
 		public string[] foundFolders;
 		public int currentFolder;
+		public bool processList;
+		public List<OsuReader.OsuMap> maps = new List<OsuReader.OsuMap>();
+		public List<ListViewItem> mapsListed = new List<ListViewItem>();
+		public int preloadInt;
+		public bool ae;
 		void Timer1Tick(object sender, EventArgs e)
 		{
 			if(process){
-				if(currentFolder < foundFolders.Length - 1){
-					string dir = foundFolders[currentFolder];
-					var foundOsuFiles = new List<string>();
-					string[] foundFiles = Directory.GetFiles(dir);
-					Log("Found directory : " + dir);
-					foreach(string a in foundFiles){
-						if(Path.GetExtension(a) == ".osu"){
-							foundOsuFiles.Add(a);
-							Log("osu file detected!");
+				if(!prelisted){
+					if(currentFolder < foundFolders.Length - 1){
+						string dir = foundFolders[currentFolder];
+						var foundOsuFiles = new List<string>();
+						string[] foundFiles = Directory.GetFiles(dir);
+						Log("Found directory : " + dir);
+						foreach(string a in foundFiles){
+							if(Path.GetExtension(a) == ".osu"){
+								foundOsuFiles.Add(a);
+								Log("osu file detected!");
+							}
 						}
+						if(foundOsuFiles.Count > 0){
+							OsuReader.OsuMap mapInfo = OsuReader.GetOsuMapInfo(foundOsuFiles[0]);
+							string audioFile = Path.Combine(dir, mapInfo.AudioFile);
+							string endFile = Path.Combine(fetchedSongsFolder, mapInfo.Artist + " - " + mapInfo.Title + Path.GetExtension(audioFile));
+							string secondAttempt = Path.Combine(fetchedSongsFolder, RemoveInitialNumbers(GetFolderName(dir)) + Path.GetExtension(audioFile));
+							string result = "Failed...";
+							if(File.Exists(audioFile)){
+								try {
+									File.WriteAllBytes(endFile, File.ReadAllBytes(audioFile));
+									result = "Success!";
+								} catch (Exception ea) {
+									Log("First attempt failed : " + ea.Message);
+									result = "First attempt failed : " + ea.Message;
+								}
+								if(result != "Success!"){
+									try {
+										File.WriteAllBytes(secondAttempt, File.ReadAllBytes(audioFile));
+										result = "Success!";
+									} catch (Exception ea) {
+										Log("Fetching failed : " + ea.Message);
+										result = "Fetching failed : " + ea.Message;
+									}
+								}
+							}
+							mapInfo.order = currentFolder;
+							ListViewItem osuFile = AddItem(mapInfo.Title,mapInfo.Artist, dir, result);
+							maps.Add(mapInfo);
+							mapsListed.Add(osuFile);
+						}
+						currentFolder++;
+					}else{
+						if(!ae){
+							Log("Fetching Done!");
+							ae = false;
+						}
+						process = false;
 					}
-					if(foundOsuFiles.Count > 0){
-						OsuReader.OsuMap mapInfo = OsuReader.GetOsuMapInfo(foundOsuFiles[0]);
+				} else{
+					if(currentFolder < maps.Count){
+						OsuReader.OsuMap mapInfo = maps[currentFolder];
+						Log("Try to fetch : " + mapInfo.Title);
+						string dir = mapsListed[currentFolder].SubItems[2].Text;
 						string audioFile = Path.Combine(dir, mapInfo.AudioFile);
 						string endFile = Path.Combine(fetchedSongsFolder, mapInfo.Artist + " - " + mapInfo.Title + Path.GetExtension(audioFile));
 						string secondAttempt = Path.Combine(fetchedSongsFolder, RemoveInitialNumbers(GetFolderName(dir)) + Path.GetExtension(audioFile));
@@ -93,9 +142,49 @@ namespace osu_Songs_Fetcher
 								}
 							}
 						}
+						mapsListed[currentFolder].SubItems[3].Text = result;
+						currentFolder++;
+					}else{
+						if(!ae){
+							Log("Fetching Done!");
+							ae = true;
+						}
+						process = false;
+					}
+				}
+				progressBar1.Value = currentFolder;
+				progressBar1.Maximum = foundFolders.Length - 1;
+				label3.Text = currentFolder.ToString() + "/" + (foundFolders.Length - 1).ToString();
+			}
+			if(processList){
+				if(currentFolder < foundFolders.Length - 1){
+					string dir = foundFolders[currentFolder];
+					var foundOsuFiles = new List<string>();
+					string[] foundFiles = Directory.GetFiles(dir);
+					Log("Found directory : " + dir);
+					foreach(string a in foundFiles){
+						if(Path.GetExtension(a) == ".osu"){
+							foundOsuFiles.Add(a);
+							Log("osu file detected!");
+						}
+					}
+					if(foundOsuFiles.Count > 0){
+						OsuReader.OsuMap mapInfo = OsuReader.GetOsuMapInfo(foundOsuFiles[0]);
+						string audioFile = Path.Combine(dir, mapInfo.AudioFile);
+						string endFile = Path.Combine(fetchedSongsFolder, mapInfo.Artist + " - " + mapInfo.Title + Path.GetExtension(audioFile));
+						string secondAttempt = Path.Combine(fetchedSongsFolder, RemoveInitialNumbers(GetFolderName(dir)) + Path.GetExtension(audioFile));
+						string result = "...";
+						result = "Idle";
+						mapInfo.order = currentFolder;
 						ListViewItem osuFile = AddItem(mapInfo.Title,mapInfo.Artist, dir, result);
+						maps.Add(mapInfo);
+						mapsListed.Add(osuFile);
 					}
 					currentFolder++;
+				}else{
+					processList = false;
+					prelisted = true;
+					Log("Listing Done!");
 				}
 				progressBar1.Value = currentFolder;
 				progressBar1.Maximum = foundFolders.Length - 1;
@@ -130,10 +219,27 @@ namespace osu_Songs_Fetcher
 			};
 			var owo = text.Split((" ").ToCharArray());
 			string result = text;
-			if(numbers.Contains(owo[0].Substring(0,1)) && numbers.Contains(owo[0].Substring(1,1))){
-				result = text.Remove(0, owo[0].Length + 1);
+			try {
+				if(numbers.Contains(owo[0].Substring(0,1)) && numbers.Contains(owo[0].Substring(1,1))){
+					result = text.Remove(0, owo[0].Length + 1);
+				}
+			} catch {
+				result = text;
 			}
 			return result;
+		}
+		void Button4Click(object sender, EventArgs e)
+		{
+			osuSongsFolder = textBox1.Text;
+			fetchedSongsFolder = textBox2.Text;
+			if(!string.IsNullOrEmpty(osuSongsFolder) && !string.IsNullOrEmpty(fetchedSongsFolder)){
+				processList = true;
+				listView1.Items.Clear();
+				if(!Directory.Exists(fetchedSongsFolder)) Directory.CreateDirectory(fetchedSongsFolder);
+				foundFolders = Directory.GetDirectories(osuSongsFolder);
+				currentFolder = 0;
+				prelisted = false;
+			}
 		}
 	}
 }

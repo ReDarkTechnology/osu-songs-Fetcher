@@ -31,6 +31,7 @@ namespace osu_Songs_Fetcher
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.ColumnHeader columnHeader4;
+		private System.Windows.Forms.Button button4;
 		
 		/// <summary>
 		/// Disposes resources used by the form.
@@ -72,6 +73,7 @@ namespace osu_Songs_Fetcher
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+			this.button4 = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// textBox1
@@ -135,11 +137,11 @@ namespace osu_Songs_Fetcher
 			// button3
 			// 
 			this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.button3.Location = new System.Drawing.Point(857, 466);
+			this.button3.Location = new System.Drawing.Point(832, 582);
 			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(75, 23);
+			this.button3.Size = new System.Drawing.Size(100, 23);
 			this.button3.TabIndex = 6;
-			this.button3.Text = "Fetch!";
+			this.button3.Text = "List and Fetch!";
 			this.button3.UseVisualStyleBackColor = true;
 			this.button3.Click += new System.EventHandler(this.Button3Click);
 			// 
@@ -147,11 +149,11 @@ namespace osu_Songs_Fetcher
 			// 
 			this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBox3.Location = new System.Drawing.Point(12, 423);
+			this.textBox3.Location = new System.Drawing.Point(12, 470);
 			this.textBox3.Multiline = true;
 			this.textBox3.Name = "textBox3";
 			this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBox3.Size = new System.Drawing.Size(919, 36);
+			this.textBox3.Size = new System.Drawing.Size(919, 105);
 			this.textBox3.TabIndex = 7;
 			// 
 			// timer1
@@ -164,15 +166,15 @@ namespace osu_Songs_Fetcher
 			// 
 			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.progressBar1.Location = new System.Drawing.Point(13, 466);
+			this.progressBar1.Location = new System.Drawing.Point(13, 582);
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(777, 23);
+			this.progressBar1.Size = new System.Drawing.Size(677, 23);
 			this.progressBar1.TabIndex = 8;
 			// 
 			// label3
 			// 
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label3.Location = new System.Drawing.Point(796, 471);
+			this.label3.Location = new System.Drawing.Point(696, 587);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(55, 23);
 			this.label3.TabIndex = 9;
@@ -190,7 +192,7 @@ namespace osu_Songs_Fetcher
 			this.columnHeader4});
 			this.listView1.Location = new System.Drawing.Point(12, 110);
 			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(919, 307);
+			this.listView1.Size = new System.Drawing.Size(919, 354);
 			this.listView1.TabIndex = 10;
 			this.listView1.UseCompatibleStateImageBehavior = false;
 			this.listView1.View = System.Windows.Forms.View.Details;
@@ -215,11 +217,23 @@ namespace osu_Songs_Fetcher
 			this.columnHeader4.Text = "Status";
 			this.columnHeader4.Width = 89;
 			// 
+			// button4
+			// 
+			this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.button4.Location = new System.Drawing.Point(751, 582);
+			this.button4.Name = "button4";
+			this.button4.Size = new System.Drawing.Size(75, 23);
+			this.button4.TabIndex = 11;
+			this.button4.Text = "List";
+			this.button4.UseVisualStyleBackColor = true;
+			this.button4.Click += new System.EventHandler(this.Button4Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(944, 501);
+			this.ClientSize = new System.Drawing.Size(944, 617);
+			this.Controls.Add(this.button4);
 			this.Controls.Add(this.listView1);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.progressBar1);

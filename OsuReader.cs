@@ -7,6 +7,7 @@ public static class OsuReader {
 		public string Title;
 		public string Artist;
 		public string AudioFile;
+		public int order;
 	}
 	public static OsuMap GetOsuMapInfo(string osuFile){
 		bool resultTaken = false;
