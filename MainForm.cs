@@ -22,15 +22,17 @@ namespace osu_Songs_Fetcher
 		// Browse osu! maps button
 		void Button1Click(object sender, EventArgs e)
 		{
-			var dialog = new CommonOpenFileDialog("Select osu! map folder...");
+			var dialog = new CommonOpenFileDialog("Select osu! Songs folder...");
 			dialog.RestoreDirectory = true;
 			dialog.IsFolderPicker = true;
 			if(dialog.ShowDialog() == CommonFileDialogResult.Ok){
 				osuSongsFolder = dialog.FileName;
 				textBox1.Text = osuSongsFolder;
-				// Auto set result folder
-				fetchedSongsFolder = Path.Combine(Directory.GetParent(dialog.FileName).FullName, "Fetched");
-				textBox2.Text = fetchedSongsFolder;
+				if(string.IsNullOrWhiteSpace(textBox2.Text)){
+					// Auto set result folder
+					fetchedSongsFolder = Path.Combine(Directory.GetParent(dialog.FileName).FullName, "Fetched");
+					textBox2.Text = fetchedSongsFolder;
+				}
 			}
 		}
 		// Browse result directory button
@@ -49,14 +51,24 @@ namespace osu_Songs_Fetcher
 		{
 			osuSongsFolder = textBox1.Text;
 			fetchedSongsFolder = textBox2.Text;
-			if(!string.IsNullOrEmpty(osuSongsFolder) && !string.IsNullOrEmpty(fetchedSongsFolder)){
-				process = true;
-				if(!prelisted){
-					listView1.Items.Clear();
-					if(!Directory.Exists(fetchedSongsFolder)) Directory.CreateDirectory(fetchedSongsFolder);
-					foundFolders = Directory.GetDirectories(osuSongsFolder);
+			if(!string.IsNullOrEmpty(osuSongsFolder)){
+				if(!string.IsNullOrEmpty(fetchedSongsFolder)){
+					process = true;
+					if(!prelisted){
+						listView1.Items.Clear();
+						if(!Directory.Exists(fetchedSongsFolder)) Directory.CreateDirectory(fetchedSongsFolder);
+						foundFolders = Directory.GetDirectories(osuSongsFolder);
+					}
+					currentFolder = 0;
+				}else{
+					MessageBox.Show("Fetched folder input are empty. Please input a directory path in the fetched folder input", Application.ProductName);
 				}
-				currentFolder = 0;
+			}else{
+				if(!string.IsNullOrEmpty(fetchedSongsFolder)){
+					MessageBox.Show("Songs folder input are empty. Please input a directory path in the Songs folder input", Application.ProductName);
+				}else{
+					MessageBox.Show("Songs folder input are empty and the fetched folder input are also empty. Please input a directory path in both of the input", Application.ProductName);
+				}
 			}
 		}
 		// Log things
@@ -172,7 +184,7 @@ namespace osu_Songs_Fetcher
 						process = false;
 					}
 				}
-				progressBar1.Value = currentFolder;
+				progressBar1.Value = Mathf.Clamp(currentFolder, 0, progressBar1.Maximum);
 				progressBar1.Maximum = foundFolders.Length - 1;
 				label3.Text = currentFolder.ToString() + "/" + (foundFolders.Length - 1).ToString();
 			}
@@ -207,7 +219,7 @@ namespace osu_Songs_Fetcher
 					prelisted = true;
 					Log("Listing Done!");
 				}
-				progressBar1.Value = currentFolder;
+				progressBar1.Value = Mathf.Clamp(currentFolder, 0, progressBar1.Maximum);
 				progressBar1.Maximum = foundFolders.Length - 1;
 				label3.Text = currentFolder.ToString() + "/" + (foundFolders.Length - 1).ToString();
 			}

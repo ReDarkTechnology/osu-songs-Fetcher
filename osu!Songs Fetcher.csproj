@@ -46,6 +46,9 @@
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions">
       <HintPath>Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Documents\Visual Studio Projects\Da Wuff Stash\Da Wuff Stash\ext\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -62,6 +65,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basics\Configuration.cs" />
+    <Compile Include="Basics\Mathf.cs" />
+    <Compile Include="Basics\MathfInternal.cs" />
+    <Compile Include="Basics\Quaternion.cs" />
+    <Compile Include="Basics\Time.cs" />
+    <Compile Include="Basics\Utility.cs" />
+    <Compile Include="Basics\Vector2.cs" />
+    <Compile Include="Basics\Vector3.cs" />
+    <Compile Include="Basics\Vector4.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -77,6 +89,9 @@
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Basics" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
